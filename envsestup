@@ -1,4 +1,0 @@
-export FLASK_APP=application.py
-export FLASK_DEBUG=1
-export FLASK_ENV=development
-export DATABASE_URL=postgres://kjwnrztyfzzzpv:b5906407ccc91da29102170618edb3b5550516bf160f4466a2156705ebf2fe4b@ec2-34-230-149-169.compute-1.amazonaws.com:5432/dei0sint0971k4
