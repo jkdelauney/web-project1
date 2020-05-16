@@ -23,7 +23,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    return "Project 1: TODO"
+    return render_template('index.html.j2')
 
 @app.route("/temp")
 def temp():
@@ -32,6 +32,14 @@ def temp():
 @app.route("/user/<username>")
 def user(username):
     return render_template('users.html.j2', username=username)
+
+@app.route("/api/<isbn>")
+def api(isbn):
+    return "this will be the api response"
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('http_error.html.j2', e=e), 404
 
 if __name__ == '__main__':
     app.run(debug=True)

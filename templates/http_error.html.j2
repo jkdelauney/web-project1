@@ -1,0 +1,10 @@
+{% extends "base.html.j2" %}
+{% block title %} Error {% endblock %}
+{% block head %}
+ {{ super() }}
+{% endblock %}
+{% block body %}
+    <p>Error</p>
+    <p>{{ e }}</p>
+    <p><a href="{{ url_for('index')  }}">Home</a></p>
+{% endblock %}
