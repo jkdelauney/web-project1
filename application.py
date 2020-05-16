@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session
+from flask import Flask, session, render_template
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -28,3 +28,10 @@ def index():
 @app.route("/temp")
 def temp():
     return "<!doctype html><html><head><title>Work In Progress</title></head><body><h1>Something will be here</h1></body></html>"
+
+@app.route("/user/<username>")
+def user(username):
+    return render_template('users.html.j2', username=username)
+
+if __name__ == '__main__':
+    app.run(debug=True)
