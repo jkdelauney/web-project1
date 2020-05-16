@@ -7,7 +7,7 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 def main():
-    db.execute("DROP TABLE IF EXISTS books CASCADE")
+#    db.execute("DROP TABLE IF EXISTS books CASCADE")
     db.execute("CREATE TABLE IF NOT EXISTS books (id SERIAL PRIMARY KEY,isbn varchar(13) NOT NULL, title character varying NOT NULL, author character varying NOT NULL, year character(4) NOT NULL)")
 
     r_count = 0
