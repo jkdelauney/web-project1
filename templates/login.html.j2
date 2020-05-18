@@ -1,9 +1,9 @@
 {% extends "base.html.j2" %}
-{% block title %} User {% endblock %}
+{% block title %} Login {% endblock %}
 {% block head %}
  {{ super() }}
 {% endblock %}
 {% block body %}
-    <p>Hello {{ username }}</p>
+    <p>Login</p>
     <p><a href="{{ url_for('index')  }}">Home</a></p>
 {% endblock %}

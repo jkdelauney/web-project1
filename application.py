@@ -25,17 +25,38 @@ db = scoped_session(sessionmaker(bind=engine))
 def index():
     return render_template('index.html.j2')
 
-@app.route("/temp")
-def temp():
-    return "<!doctype html><html><head><title>Work In Progress</title></head><body><h1>Something will be here</h1></body></html>"
+@app.route("/login")
+def login():
+    return render_template('login.html.j2')
+
+@app.route("/logout")
+def logout():
+    return render_template('logout.html.j2')
 
 @app.route("/user/<username>")
 def user(username):
     return render_template('users.html.j2', username=username)
 
+@app.route("/user")
+def userx():
+    return user('test')
+
+@app.route("/search")
+def search():
+    return render_template('search.html.j2')
+
 @app.route("/api/<isbn>")
 def api(isbn):
-    return "this will be the api response"
+    if api == 'test':
+      response = "no ISBN requested"
+    else:
+      response = "this will be the api response"
+    return response
+
+@app.route("/api")
+def apix():
+    return api('test')
+
 
 @app.errorhandler(404)
 def page_not_found(e):

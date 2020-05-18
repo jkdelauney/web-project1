@@ -5,4 +5,12 @@
 {% endblock %}
 {% block body %}
     <p>Project 1: TODO</p>
+      
+    <ul>
+    {% for href, caption in [('/search', 'search'), ('/api', 'api'),
+                             ('/user', 'user'), ('/login', 'login'),
+                             ('/logout', 'logout')] %}
+        <li><a href="{{ href }}">{{ caption }}</a></li>
+    {% endfor %}
+    </ul>
 {% endblock %}
