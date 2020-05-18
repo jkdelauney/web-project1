@@ -1,4 +1,5 @@
 import os
+import json
 
 from flask import Flask, session, render_template
 from flask_session import Session
@@ -47,16 +48,29 @@ def search():
 
 @app.route("/api/<isbn>")
 def api(isbn):
-    if api == 'test':
-      response = "no ISBN requested"
+    response = "-> "
+    if isbn == 'test':
+#      isbn = 1456527738
+#      result = db.execute("select * from books where isbn=:isbn", {'isbn': isbn}).fetchone()
+
+      result = db.execute("select * from books where isbn='1456527738'").fetchone()
+      response = response + "no ISBN requested"
+      result["title"] + " " + result["author"] + " " + result["year"] + " " + result["isbn"]
+
+      api_response = {}
+      api_response["title"] = result["title"]
+      api_response["author"] = result["author"]
+      api_response["year"] = result["year"]
+      api_response["isbn"] = result["isbn"]
+      api_response["review_count"] = 0
+      api_response["average_score"] = 0.0
+
+      json.dumps(api_response)
+
+      return api_response
     else:
-      response = "this will be the api response"
-    return response
-
-@app.route("/api")
-def apix():
-    return api('test')
-
+      response = response + "this will be the api response"
+      return response, 404
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -64,3 +78,5 @@ def page_not_found(e):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
