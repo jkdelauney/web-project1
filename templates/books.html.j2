@@ -1,0 +1,16 @@
+{% extends "base.html.j2" %}
+{% block title %} Search Results {% endblock %}
+{% block head %}
+ {{ super() }}
+{% endblock %}
+{% block body %}
+    <p>Search Results</p>
+    <div>
+      <ul id="book_list">
+      {% for book in books %}
+        <li><a href="{{ url_for('book') }}">{{ book.title }}</a> by {{ book.author }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+    <p><a href="{{ url_for('index') }}">Home</a></p>
+{% endblock %}
