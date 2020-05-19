@@ -46,31 +46,37 @@ def userx():
 def search():
     return render_template('search.html.j2')
 
-@app.route("/api/<isbn>")
+# request details about a book by isbn returned in json format
+@app.route("/api/<string:isbn>")
 def api(isbn):
-    response = "-> "
-    if isbn == 'test':
-#      isbn = 1456527738
-#      result = db.execute("select * from books where isbn=:isbn", {'isbn': isbn}).fetchone()
+    # search for book in books by isbn passed through endpoint
+    result = db.execute("select * from books where isbn=:isbn", {'isbn': isbn}).fetchone()
+    api_response = {}
 
-      result = db.execute("select * from books where isbn='1456527738'").fetchone()
-      response = response + "no ISBN requested"
-      result["title"] + " " + result["author"] + " " + result["year"] + " " + result["isbn"]
+    if result != None: # check if book was found
+        # search for review info, count number of reviews and average score
+        rate_result = db.execute("select count(*), round(avg(ALL rating), 1) from reviews where book_id=:book_id", {'book_id': result["id"]}).fetchone()
 
-      api_response = {}
-      api_response["title"] = result["title"]
-      api_response["author"] = result["author"]
-      api_response["year"] = result["year"]
-      api_response["isbn"] = result["isbn"]
-      api_response["review_count"] = 0
-      api_response["average_score"] = 0.0
+        if rate_result["round"] == None: # check if result has a value
+            average_score = 0.0 # if not then set value to 0.0
+        else:
+            average_score = float(rate_result["round"]) # cast value into type that json. can process
 
-      json.dumps(api_response)
+        api_response["title"] = result["title"]
+        api_response["author"] = result["author"]
+        api_response["year"] = int(result["year"]) # cast year into int as it is char(4) in db
+        api_response["isbn"] = result["isbn"]
+        api_response["review_count"] = rate_result["count"]
+        api_response["average_score"] = average_score
 
-      return api_response
+        http_response_code = 200 # set response code to 200, even though that is default
     else:
-      response = response + "this will be the api response"
-      return response, 404
+        api_response["error"] = "isbn not found" # human readable error message
+
+        http_response_code = 404 # set response code to 404 as the isbn was not found
+
+    json.dumps(api_response) # output response in json format
+    return api_response, http_response_code
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -78,5 +84,3 @@ def page_not_found(e):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
