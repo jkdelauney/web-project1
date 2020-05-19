@@ -23,7 +23,7 @@ Web Programming with Python and JavaScript
     "average_score": 5.0
 }`
 
-- [ ] If the requested ISBN number isn’t in your database, your website should return a 404 error.
+- [X] If the requested ISBN number isn’t in your database, your website should return a 404 error.
 
 - [ ] You should be using raw SQL commands (as via SQLAlchemy’s execute method) in order to make database queries. You should not use the SQLAlchemy ORM (if familiar with it) for this project.
 - [ ] In README.md, include a short writeup describing your project, what’s contained in each file, and (optionally) any other additional information the staff should know about your project.
