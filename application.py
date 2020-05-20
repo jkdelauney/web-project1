@@ -57,7 +57,7 @@ def api(isbn):
         # search for review info, count number of reviews and average score
         rate_result = db.execute("select count(*), round(avg(ALL rating), 1) from reviews where book_id=:book_id", {'book_id': result["id"]}).fetchone()
 
-        if rate_result["round"] == None: # check if result has a value
+        if rate_result["round"] is None:    # check if result has a value
             average_score = 0.0 # if not then set value to 0.0
         else:
             average_score = float(rate_result["round"]) # cast value into type that json. can process
