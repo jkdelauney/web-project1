@@ -1,13 +1,15 @@
-import csv, os, sys
+import csv
+import os
+import sys
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
-else:
-    engine = create_engine(os.getenv("DATABASE_URL"))
-    db = scoped_session(sessionmaker(bind=engine))
+
+engine = create_engine(os.getenv("DATABASE_URL"))
+db = scoped_session(sessionmaker(bind=engine))
 
 def main():
 #    db.execute("DROP TABLE IF EXISTS books CASCADE")
