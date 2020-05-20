@@ -1,0 +1,15 @@
+{% extends "base.html.j2" %}
+{% block title %} {{ book.title }} by {{ book.author }} {% endblock %}
+{% block head %}
+ {{ super() }}
+{% endblock %}
+{% block body %}
+    <p>Book details</p>
+    <div class="book-details">
+      {{ book.title }} by {{ book.author }} published {{ book.year }}</br>
+      {%- if good_reads.status == 200 -%}
+      ratings {{ good_reads.ratings_count }} average {{ good_reads.average_rating }}
+      {% endif %}
+    </div>
+    <p><a href="{{ url_for('index') }}">Home</a></p>
+{% endblock %}
