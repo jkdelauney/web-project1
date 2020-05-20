@@ -52,25 +52,25 @@ def search():
 def book(isbn):
     result = db.execute("select * from books where isbn=:isbn", {'isbn': isbn}).fetchone()
 
-    if result == None: # if book isn't found
+    if result is None: # if book isn't found
         e = "The book you are looking for does not exist."
         return render_template('http_error.html.j2', e=e), 404
-    else: # else request details from Good Reads
-        good_reads = {}
+    # else request details from Good Reads
+    good_reads = {}
 
-        # request review counts from Good Reads api
-        res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "Hdlz94sDrCNI2sivLhwQ", "isbns": isbn})
+    # request review counts from Good Reads api
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "Hdlz94sDrCNI2sivLhwQ", "isbns": isbn})
 
-        if res.status_code == 200: # if on Good Reads assign variables
-            res_dict = json.loads(res.text)
+    if res.status_code == 200: # if on Good Reads assign variables
+        res_dict = json.loads(res.text)
 
-            good_reads["status"] = res.status_code
-            good_reads["average_rating"] = res_dict["books"][0]["average_rating"]
-            good_reads["ratings_count"] = res_dict["books"][0]["work_ratings_count"]
-        else: # if not just assign status code
-            good_reads["status"] = res.status_code
+        good_reads["status"] = res.status_code
+        good_reads["average_rating"] = res_dict["books"][0]["average_rating"]
+        good_reads["ratings_count"] = res_dict["books"][0]["work_ratings_count"]
+    else: # if not just assign status code
+        good_reads["status"] = res.status_code
 
-        return render_template('book.html.j2', book=result, good_reads=good_reads)
+    return render_template('book.html.j2', book=result, good_reads=good_reads)
 
 # request details about a book by isbn returned in json format
 @app.route("/api/<string:isbn>")
@@ -79,7 +79,7 @@ def api(isbn):
     result = db.execute("select * from books where isbn=:isbn", {'isbn': isbn}).fetchone()
     api_response = {}
 
-    if result != None: # check if book was found
+    if result is not None: # check if book was found
         # search for review info, count number of reviews and average score
         rate_result = db.execute("select count(*), round(avg(ALL rating), 1) from reviews where book_id=:book_id", {'book_id': result["id"]}).fetchone()
 
