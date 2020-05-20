@@ -1,5 +1,6 @@
 import os
 import json
+import requests
 
 from flask import Flask, session, render_template
 from flask_session import Session
@@ -45,6 +46,29 @@ def userx():
 @app.route("/search")
 def search():
     return render_template('search.html.j2')
+
+@app.route("/book/<string:isbn>")
+def book(isbn):
+    result = db.execute("select * from books where isbn=:isbn", {'isbn': isbn}).fetchone()
+
+    if result == None:
+        e = "The book you are looking for does not exist."
+        return render_template('http_error.html.j2', e=e), 404
+    else:
+        good_reads = {}
+
+        res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "Hdlz94sDrCNI2sivLhwQ", "isbns": isbn})
+
+        if res.status_code == 200:
+            res_dict = json.loads(res.text)
+
+            good_reads["status"] = res.status_code
+            good_reads["average_rating"] = res_dict["books"][0]["average_rating"]
+            good_reads["ratings_count"] = res_dict["books"][0]["work_ratings_count"]
+        else:
+            good_reads["status"] = res.status_code
+
+        return render_template('book.html.j2', book=result, good_reads=good_reads)
 
 # request details about a book by isbn returned in json format
 @app.route("/api/<string:isbn>")
