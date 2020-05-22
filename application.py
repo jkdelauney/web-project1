@@ -56,9 +56,9 @@ def search():
 # request details about a book by isbn returned as an HTML page
 @app.route("/book/<string:isbn>")
 def book(isbn):
-    book = db.execute("select * from books where isbn=:isbn", {'isbn': isbn}).fetchone()
+    book_detail = db.execute("select * from books where isbn=:isbn", {'isbn': isbn}).fetchone()
 
-    if book is None:  # if book isn't found
+    if book_detail is None:  # if book isn't found
         e = "The book you are looking for does not exist."
         return render_template('http_error.html.j2', e=e), 404
     # else request details from Good Reads
@@ -77,9 +77,9 @@ def book(isbn):
     else:  # if not just assign status code
         good_reads["status"] = res.status_code
 
-    reviews = db.execute("select trim(username) as username, trim(displayname) as displayname, review, rating, timestamp from reviews join users on reviews.user_id = users.id where book_id=:book_id", {'book_id': book['id']}).fetchall()
-    print(reviews)
-    return render_template('book.html.j2', book=book, good_reads=good_reads, reviews=reviews)
+    reviews = db.execute("select trim(username) as username, trim(displayname) as displayname, review, rating, timestamp from reviews join users on reviews.user_id = users.id where book_id=:book_id", {'book_id': book_detail['id']}).fetchall()
+
+    return render_template('book.html.j2', book=book_detail, good_reads=good_reads, reviews=reviews)
 
 
 # request details about a book by isbn returned in json format
