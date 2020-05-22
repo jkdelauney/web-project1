@@ -77,15 +77,9 @@ def book(isbn):
     else:  # if not just assign status code
         good_reads["status"] = res.status_code
 
-<<<<<<< HEAD
     reviews = db.execute("select trim(username) as username, trim(displayname) as displayname, review, rating, timestamp from reviews join users on reviews.user_id = users.id where book_id=:book_id", {'book_id': book_detail['id']}).fetchall()
 
     return render_template('book.html.j2', book=book_detail, good_reads=good_reads, reviews=reviews)
-=======
-    reviews = db.execute("select trim(username) as username, trim(displayname) as displayname, review, rating, timestamp from reviews join users on reviews.user_id = users.id where book_id=:book_id", {'book_id': book['id']}).fetchall()
-
-    return render_template('book.html.j2', book=book, good_reads=good_reads, reviews=reviews)
->>>>>>> b2ad08c55a31db2da71a76c3b0be9f66d3f97b49
 
 
 # request details about a book by isbn returned in json format
