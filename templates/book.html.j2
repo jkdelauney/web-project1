@@ -6,9 +6,25 @@
 {% block body %}
     <p>Book details</p>
     <div class="book-details">
-      {{ book.title }} by {{ book.author }} published {{ book.year }}</br>
+      {{ book.title }} by {{ book.author }} published {{ book.year }} </br>
       {%- if good_reads.status == 200 -%}
-      ratings {{ good_reads.ratings_count }} average {{ good_reads.average_rating }}
+        ratings {{ good_reads.ratings_count }} average {{ good_reads.average_rating }}
+      {% endif %}
+      {%- if reviews -%}
+        <ul>
+          {% for review in reviews %}
+            <li>
+              <div class='user'>user: <a href="{{ url_for('user', username=review.username ) }}">{{ review.displayname }}</a></div>
+              <div class="review_text">
+                Review: {{ review.review }}
+              </div> <div class="review_rating">
+                Rating: {{ review.rating }}
+              </div> <div class="review_timestamp">
+                On: {{ review.timestamp }}
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
       {% endif %}
     </div>
     <p><a href="{{ url_for('index') }}">Home</a></p>
