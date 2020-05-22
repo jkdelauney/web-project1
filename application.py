@@ -78,7 +78,7 @@ def book(isbn):
         good_reads["status"] = res.status_code
 
     reviews = db.execute("select trim(username) as username, trim(displayname) as displayname, review, rating, timestamp from reviews join users on reviews.user_id = users.id where book_id=:book_id", {'book_id': book['id']}).fetchall()
-    print(reviews)
+
     return render_template('book.html.j2', book=book, good_reads=good_reads, reviews=reviews)
 
 
