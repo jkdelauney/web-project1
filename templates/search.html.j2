@@ -1,9 +1,27 @@
-{% extends "base.html.j2" %}
-{% block title %} Search {% endblock %}
-{% block head %}
- {{ super() }}
-{% endblock %}
-{% block body %}
+{%- extends "base.html.j2" -%}
+{%- block title -%} Search {%- endblock -%}
+{%- block head -%}
+  {{ super() }}
+{%- endblock -%}
+{%- block body -%}
     <p>Search for a book</p>
+    <div class="search-box">
+      <form action="/search" method="post">
+        <label for="search-box">Search: </label>
+        <input type="search" size="40" id="search-box" name="query">
+        <input type="submit" value="Submit">
+      </form>
+    </div>
+    {%- if query_result and query_result != 0 %}
+    <ul>
+      {% for book in query_result %}
+        <li><a href="{{ url_for('book', isbn=book.isbn ) }}">{{ book.title }}</a> by {{ book.author }}</li>
+      {% endfor %}
+    </ul>
+    {% elif query_result == 0 %}
+    <div class="book-not-found">
+      No matches found
+    </div>
+    {% endif %}
     <p><a href="{{ url_for('index') }}">Home</a></p>
-{% endblock %}
+{%- endblock -%}

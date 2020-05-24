@@ -2,7 +2,7 @@ import os
 import json
 import requests
 
-from flask import Flask, session, render_template
+from flask import Flask, session, render_template, request
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -48,9 +48,20 @@ def userx():
     return user('test')
 
 
-@app.route("/search")
+@app.route("/search", methods=["GET", "POST"])
 def search():
-    return render_template('search.html.j2')
+    query_result = None
+    if request.method == "POST":
+        query = "%" + request.form["query"] + "%"
+        print(f"POST: {query_result}")
+        query_result = db.execute("select * from books where isbn like :query or title like :query or author like :query", {'query': query}).fetchall()
+        print(f"AFTR: {query_result}")
+        if query_result == []:
+            query_result = 0
+
+    print(f"BOTH: {query_result}")
+
+    return render_template('search.html.j2', query_result=query_result)
 
 
 # request details about a book by isbn returned as an HTML page
