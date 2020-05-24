@@ -53,13 +53,9 @@ def search():
     query_result = None
     if request.method == "POST":
         query = "%" + request.form["query"] + "%"
-        print(f"POST: {query_result}")
         query_result = db.execute("select * from books where isbn like :query or title like :query or author like :query", {'query': query}).fetchall()
-        print(f"AFTR: {query_result}")
         if query_result == []:
             query_result = 0
-
-    print(f"BOTH: {query_result}")
 
     return render_template('search.html.j2', query_result=query_result)
 
