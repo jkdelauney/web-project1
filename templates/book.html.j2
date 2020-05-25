@@ -1,26 +1,26 @@
 {% extends "base.html.j2" %}
-{% block title %} {{ book.title }} by {{ book.author }} {% endblock %}
+{% block title %} {{ book.title|e }} by {{ book.author|e }} {% endblock %}
 {% block head %}
  {{ super() }}
 {% endblock %}
 {% block body %}
     <p>Book details</p>
     <div class="book-details">
-      {{ book.title }} by {{ book.author }} published {{ book.year }} </br>
+      {{ book.title|e }} by {{ book.author|e }} published {{ book.year|e }} </br>
       {%- if good_reads.status == 200 -%}
-        ratings {{ good_reads.ratings_count }} average {{ good_reads.average_rating }}
+        ratings {{ good_reads.ratings_count|e }} average {{ good_reads.average_rating|e }}
       {% endif %}
       {%- if reviews -%}
         <ul>
           {% for review in reviews %}
             <li>
-              <div class='user'>user: <a href="{{ url_for('user', username=review.username ) }}">{{ review.displayname }}</a></div>
+              <div class='user'>user: <a href="{{ url_for('user', username=review.username ) }}">{{ review.displayname|e }}</a></div>
               <div class="review_text">
-                Review: {{ review.review }}
+                Review: {{ review.review|e }}
               </div> <div class="review_rating">
-                Rating: {{ review.rating }}
+                Rating: {{ review.rating|e }}
               </div> <div class="review_timestamp">
-                On: {{ review.timestamp }}
+                On: {{ review.timestamp|e }}
               </div>
             </li>
           {% endfor %}

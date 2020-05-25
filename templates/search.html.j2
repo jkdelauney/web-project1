@@ -15,7 +15,7 @@
     {%- if query_result and query_result != 0 %}
     <ul>
       {% for book in query_result %}
-        <li><a href="{{ url_for('book', isbn=book.isbn ) }}">{{ book.title }}</a> by {{ book.author }}</li>
+        <li><a href="{{ url_for('book', isbn=book.isbn ) }}">{{ book.title|e }}</a> by {{ book.author|e }}</li>
       {% endfor %}
     </ul>
     {% elif query_result == 0 %}
