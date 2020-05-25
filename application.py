@@ -3,6 +3,7 @@ import json
 import requests
 
 from flask import Flask, session, render_template, request
+from flask import jsonify, make_response
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -119,8 +120,7 @@ def api(isbn):
 
         http_response_code = 404  # set response code to 404 as the isbn was not found
 
-    json.dumps(api_response)  # output response in json format
-    return api_response, http_response_code
+    return make_response(jsonify(api_response), http_response_code)
 
 
 @app.errorhandler(404)
