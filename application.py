@@ -2,7 +2,7 @@ import os
 import json
 import requests
 
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, redirect, url_for
 from flask import jsonify, make_response
 from flask_session import Session
 from sqlalchemy import create_engine
@@ -13,6 +13,9 @@ app = Flask(__name__)
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
+
+if not os.environ.get("SECRET_KEY"):
+    raise ValueError("No SECRET_KEY set for Flask application")
 
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
@@ -26,16 +29,27 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    return render_template('index.html.j2')
+    if 'username' in session:
+        username = session['username']
+    else:
+        username = None
+
+    return render_template('index.html.j2', username=username)
 
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == 'POST':
+      session['username'] = request.form['username']
+      return redirect(url_for('index'))
+
     return render_template('login.html.j2')
 
 
 @app.route("/logout")
 def logout():
+    # remove the username from the session if it is there
+    session.pop('username', None)
     return render_template('logout.html.j2')
 
 
@@ -46,7 +60,12 @@ def user(username):
 
 @app.route("/user")
 def userx():
-    return user('test')
+    if 'username' in session:
+        username = session['username']
+    else:
+        return redirect(url_for('login'))
+
+    return redirect(url_for('user', username=username))
 
 
 @app.route("/search", methods=["GET", "POST"])

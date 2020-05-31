@@ -5,7 +5,9 @@
 {% endblock %}
 {% block body %}
     <p>Project 1: TODO</p>
-
+    {%- if username %}
+    {{ username }}
+    {% endif -%}
     <ul>
     {% for href, caption in [('/search', 'search'), ('/user', 'user'),
                              ('/login', 'login'), ('/logout', 'logout')] %}
