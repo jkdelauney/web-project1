@@ -30,11 +30,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    if 'username' in session:
-        username = session['username']
-    else:
-        username = None
-
+    username = session['username'] if 'username' in session else None
     return render_template('index.html.j2', username=username)
 
 
