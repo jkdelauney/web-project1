@@ -49,18 +49,18 @@ def login():
         if user_lookup is None:  # if book isn't found
             error_message = "User not found or password invalid"
             return render_template('login.html.j2', error_message=error_message)
+
+        if check_password_hash(user_lookup['password'], password):
+            session['username'] = user_lookup['username']
+            session['displayname'] = user_lookup['displayname']
+            session['user_id'] = user_lookup['id']
         else:
-            if check_password_hash(user_lookup['password'], password):
-                session['username'] = user_lookup['username']
-                session['displayname'] = user_lookup['displayname']
-                session['user_id'] = user_lookup['id']
-            else:
-                error_message = "User not found or password invalid"
-                return render_template('login.html.j2', error_message=error_message)
+            error_message = "User not found or password invalid"
+            return render_template('login.html.j2', error_message=error_message)
 
         return redirect(url_for('index'))
-    else:
-        error_message = None
+  
+    error_message = None
 
     return render_template('login.html.j2', error_message=error_message)
 
