@@ -15,8 +15,8 @@ app = Flask(__name__)
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
 
-if not os.environ.get("SECRET_KEY"):
-    raise ValueError("No SECRET_KEY set for Flask application")
+if not os.getenv("SECRET_KEY"):
+    raise RuntimeError("SECRET_KEY is not set")
 
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
