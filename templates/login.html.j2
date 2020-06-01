@@ -7,9 +7,10 @@
     <p>Login</p>
 
     <form action = "/login" method = "POST">
-      <p><input type = "text" name = "username"/></p>
-      <p<<input type = "submit" value = "Login"/></p>
+      <p><input type="text" name="username"/></p>
+      <p><input type="password" name="password"></p>
+      <p><input type="submit" value="Login"/></p>
     </form>
-    
+    {% if error_message %}{{ error_message}}{% endif %}
     <p><a href="{{ url_for('index')  }}">Home</a></p>
 {% endblock %}

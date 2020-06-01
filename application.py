@@ -7,6 +7,7 @@ from flask import jsonify, make_response
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
@@ -40,16 +41,36 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == 'POST':
-      session['username'] = request.form['username']
-      return redirect(url_for('index'))
+        username = request.form['username']
+        password = request.form['password']
 
-    return render_template('login.html.j2')
+        user_lookup = db.execute("select trim(username) as username, trim(displayname) as displayname, password, email, id from users where username=:username", {'username': username}).fetchone()
+
+        if user_lookup is None:  # if book isn't found
+            error_message = "User not found or password invalid"
+            return render_template('login.html.j2', error_message=error_message)
+        else:
+            if check_password_hash(user_lookup['password'], password):
+                session['username'] = user_lookup['username']
+                session['displayname'] = user_lookup['displayname']
+                session['user_id'] = user_lookup['id']
+            else:
+                error_message = "User not found or password invalid"
+                return render_template('login.html.j2', error_message=error_message)
+
+        return redirect(url_for('index'))
+    else:
+        error_message = None
+
+    return render_template('login.html.j2', error_message=error_message)
 
 
 @app.route("/logout")
 def logout():
     # remove the username from the session if it is there
     session.pop('username', None)
+    session.pop('displayname', None)
+    session.pop('user_id', None)
     return render_template('logout.html.j2')
 
 
@@ -70,6 +91,11 @@ def userx():
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
+    if 'username' in session:
+        username = session['username']
+    else:
+        return redirect(url_for('login'))
+
     query_result = None
     if request.method == "POST":
         query = "%" + request.form["query"] + "%"
@@ -83,6 +109,11 @@ def search():
 # request details about a book by isbn returned as an HTML page
 @app.route("/book/<string:isbn>")
 def book(isbn):
+    if 'username' in session:
+        username = session['username']
+    else:
+        return redirect(url_for('login'))
+
     book_detail = db.execute("select * from books where isbn=:isbn", {'isbn': isbn}).fetchone()
 
     if book_detail is None:  # if book isn't found
