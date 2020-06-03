@@ -4,13 +4,13 @@
  {{ super() }}
 {% endblock %}
 {% block body %}
-    <p>Project 1: TODO</p>
-    {%- if username %}
-    {{ username }}
-    {% endif -%}
+    <p>Project 1:</p>
+    {%- if session %}
+    <a href="{{ url_for('user', username=session.username ) }}">{{ session.displayname }}</a>
+    {% endif %}
     <ul>
-    {% for href, caption in [('/search', 'search'), ('/user', 'user'),
-                             ('/login', 'login'), ('/logout', 'logout')] %}
+    {% for href, caption in [('/search', 'search'), ('/login', 'login'),
+                            ('/logout', 'logout'), ('/signup', 'signup')] %}
         <li><a href="{{ href }}">{{ caption }}</a></li>
     {% endfor %}
     </ul>

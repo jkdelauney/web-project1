@@ -30,8 +30,35 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    username = session['username'] if 'username' in session else None
-    return render_template('index.html.j2', username=username)
+    return render_template('index.html.j2', session=session)
+
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form['username']
+        password = generate_password_hash(request.form['password'])
+        displayname = request.form['displayname']
+        email = request.form['email']
+
+        user_lookup = db.execute("select username from users where username=:username", {'username': username}).fetchone()
+        if user_lookup is not None:
+            error_message = "Username is already taken"
+            return render_template('signup.html.j2', error_message=error_message)
+
+        db.execute("insert into users (username, displayname, email, password) values (:username, :displayname, :email, :password)",
+                    {'username': username, 'displayname': displayname, 'email': email, 'password': password})
+
+        db.commit()
+
+        session['username'] = user_lookup['username']
+        session['displayname'] = user_lookup['displayname']
+        session['user_id'] = user_lookup['id']
+        session['email'] = user_lookup['email']
+
+        return redirect(url_for('user', username=username))
+
+    return render_template('signup.html.j2')
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -50,12 +77,13 @@ def login():
             session['username'] = user_lookup['username']
             session['displayname'] = user_lookup['displayname']
             session['user_id'] = user_lookup['id']
+            session['email'] = user_lookup['email']
         else:
             error_message = "User not found or password invalid"
             return render_template('login.html.j2', error_message=error_message)
 
         return redirect(url_for('index'))
-  
+
     error_message = None
 
     return render_template('login.html.j2', error_message=error_message)
@@ -67,6 +95,7 @@ def logout():
     session.pop('username', None)
     session.pop('displayname', None)
     session.pop('user_id', None)
+    session.pop('email', None)
     return render_template('logout.html.j2')
 
 
@@ -77,19 +106,15 @@ def user(username):
 
 @app.route("/user")
 def userx():
-    if 'username' in session:
-        username = session['username']
-    else:
+    if 'username' not in session:
         return redirect(url_for('login'))
 
-    return redirect(url_for('user', username=username))
+    return redirect(url_for('user', username=session['username']))
 
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
-    if 'username' in session:
-        username = session['username']
-    else:
+    if 'username' not in session:
         return redirect(url_for('login'))
 
     query_result = None
@@ -105,9 +130,7 @@ def search():
 # request details about a book by isbn returned as an HTML page
 @app.route("/book/<string:isbn>")
 def book(isbn):
-    if 'username' in session:
-        username = session['username']
-    else:
+    if 'username' not in session:
         return redirect(url_for('login'))
 
     book_detail = db.execute("select * from books where isbn=:isbn", {'isbn': isbn}).fetchone()
