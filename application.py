@@ -101,15 +101,21 @@ def logout():
 
 @app.route("/user/<string:username>")
 def user(username):
-    return render_template('users.html.j2', username=username)
+    userdata = {}
+    user_lookup = db.execute("select trim(username) as username, trim(displayname) as displayname,\
+                            email from users where username=:username", {'username': username}).fetchone()
+    if user_lookup is None:
+        userdata['message'] = "User not found"
+    else:
+        userdata['username'] = user_lookup['username']
+        userdata['displayname'] = user_lookup['displayname']
+        userdata['email'] = user_lookup['email']
+        if 'username' in session and userdata['username'] == session['username']:
+            userdata['self'] = True
+        else:
+            userdata['self'] = False
 
-
-@app.route("/user")
-def userx():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-
-    return redirect(url_for('user', username=session['username']))
+    return render_template('users.html.j2', userdata=userdata)
 
 
 @app.route("/search", methods=["GET", "POST"])

@@ -7,10 +7,12 @@
     <p>Project 1:</p>
     {%- if session %}
     <a href="{{ url_for('user', username=session.username ) }}">{{ session.displayname }}</a>
+    {% set navigation = [('/search', 'search'), ('/logout', 'logout')] %}
+    {% else %}
+    {% set navigation = [('/login', 'login'), ('/signup', 'signup')] %}
     {% endif %}
     <ul>
-    {% for href, caption in [('/search', 'search'), ('/login', 'login'),
-                            ('/logout', 'logout'), ('/signup', 'signup')] %}
+    {% for href, caption in navigation %}
         <li><a href="{{ href }}">{{ caption }}</a></li>
     {% endfor %}
     </ul>
