@@ -35,30 +35,29 @@ def index():
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
-    if request.method == "POST":
-        username = request.form['username']
-        password = generate_password_hash(request.form['password'])
-        displayname = request.form['displayname']
-        email = request.form['email']
+    if request.method != "POST":
+        return render_template('signup.html.j2')
+    username = request.form['username']
+    password = generate_password_hash(request.form['password'])
+    displayname = request.form['displayname']
+    email = request.form['email']
 
-        user_lookup = db.execute("select username from users where username=:username", {'username': username}).fetchone()
-        if user_lookup is not None:
-            error_message = "Username is already taken"
-            return render_template('signup.html.j2', error_message=error_message)
+    user_lookup = db.execute("select username from users where username=:username", {'username': username}).fetchone()
+    if user_lookup is not None:
+        error_message = "Username is already taken"
+        return render_template('signup.html.j2', error_message=error_message)
 
-        db.execute("insert into users (username, displayname, email, password) values (:username, :displayname, :email, :password)",
-                    {'username': username, 'displayname': displayname, 'email': email, 'password': password})
+    db.execute("insert into users (username, displayname, email, password) values (:username, :displayname, :email, :password)",
+                {'username': username, 'displayname': displayname, 'email': email, 'password': password})
 
-        db.commit()
+    db.commit()
 
-        session['username'] = user_lookup['username']
-        session['displayname'] = user_lookup['displayname']
-        session['user_id'] = user_lookup['id']
-        session['email'] = user_lookup['email']
+    session['username'] = user_lookup['username']
+    session['displayname'] = user_lookup['displayname']
+    session['user_id'] = user_lookup['id']
+    session['email'] = user_lookup['email']
 
-        return redirect(url_for('user', username=username))
-
-    return render_template('signup.html.j2')
+    return redirect(url_for('user', username=username))
 
 
 @app.route("/login", methods=["GET", "POST"])
