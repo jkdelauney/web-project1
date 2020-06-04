@@ -1,0 +1,30 @@
+{% extends "base.html.j2" %}
+{% block title %} Signup {% endblock %}
+{% block head %}
+ {{ super() }}
+{% endblock %}
+{% block body %}
+    <p>Signup</p>
+
+    <form action = "/signup" method = "POST">
+      <p>
+        <label for="username">Username:</label>
+        <input type="text" name="username" required/>
+      </p>
+      <p>
+        <label for="displayname">Displayname:</label>
+        <input type="text" name="displayname" required>
+      </p>
+      <p>
+        <label for="email">Email:</label>
+        <input type="text" name="email">
+      </p>
+      <p>
+        <label for="password">Password:</label>
+        <input type="password" name="password" required>
+      </p>
+      <p><input type="submit" value="Create"/></p>
+    </form>
+    {% if error_message %}{{ error_message}}{% endif %}
+    <p><a href="{{ url_for('index') }}">Home</a></p>
+{% endblock %}
