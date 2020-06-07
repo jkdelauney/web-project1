@@ -20,8 +20,7 @@ if not os.getenv("SECRET_KEY"):
 
 if not os.getenv("GOODREADS_KEY"):
     raise RuntimeError("GOODREADS_KEY is not set")
-else:
-    goodreads_key = os.getenv("GOODREADS_KEY")
+goodreads_key = os.getenv("GOODREADS_KEY")
 
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
