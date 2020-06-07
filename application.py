@@ -18,6 +18,11 @@ if not os.getenv("DATABASE_URL"):
 if not os.getenv("SECRET_KEY"):
     raise RuntimeError("SECRET_KEY is not set")
 
+if not os.getenv("GOODREADS_KEY"):
+    raise RuntimeError("GOODREADS_KEY is not set")
+else:
+    goodreads_key = os.getenv("GOODREADS_KEY")
+
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
@@ -148,7 +153,7 @@ def book(isbn):
 
     # request review counts from Good Reads api
     res = requests.get("https://www.goodreads.com/book/review_counts.json",
-                       params={"key": "Hdlz94sDrCNI2sivLhwQ", "isbns": isbn})
+                       params={"key": goodreads_key, "isbns": isbn})
 
     if res.status_code == 200:  # if on Good Reads assign variables
         res_dict = json.loads(res.text)
